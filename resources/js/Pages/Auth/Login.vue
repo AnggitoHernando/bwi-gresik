@@ -1,11 +1,14 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import Checkbox from "@/Components/Checkbox.vue";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Eye, EyeOff } from "lucide-vue-next";
+import { ref } from "vue";
+const showPassword = ref(false);
 
 defineProps({
     canResetPassword: {
@@ -17,14 +20,14 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
+    form.post(route("login"), {
+        onFinish: () => form.reset("password"),
     });
 };
 </script>
@@ -54,17 +57,25 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4 relative">
                 <InputLabel for="password" value="Password" />
 
-                <TextInput
+                <input
+                    :type="showPassword ? 'text' : 'password'"
+                    placeholder="Masukkan password"
                     id="password"
-                    type="password"
-                    class="mt-1 block w-full"
                     v-model="form.password"
-                    required
-                    autocomplete="current-password"
+                    class="border rounded w-full px-3 py-2 pr-10"
                 />
+
+                <button
+                    type="button"
+                    @click="showPassword = !showPassword"
+                    class="absolute right-2 bottom-1 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                    <Eye v-if="!showPassword" class="w-5 h-5" />
+                    <EyeOff v-else class="w-5 h-5" />
+                </button>
 
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
@@ -72,9 +83,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
+                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
 
