@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
+import KritikSaran from "@/Components/KritikSaran.vue";
 
 const mobileOpen = ref(false);
 const page = usePage();
@@ -104,10 +105,10 @@ const isActive = (href) => page.url === href;
             </div>
         </header>
 
-        <!-- Page Content -->
         <main class="pt-16">
             <slot />
         </main>
+        <KritikSaran />
 
         <!-- Footer -->
         <footer class="bg-primary mt-24">
