@@ -23,7 +23,7 @@ watch(
         if (flash?.success) success(flash.success);
         if (flash?.error) error(flash.error);
     },
-    { deep: true }
+    { deep: true },
 );
 
 // submit form
@@ -54,7 +54,6 @@ function submitKritik() {
 </script>
 
 <template>
-    <!-- Floating Button -->
     <div class="fixed bottom-6 right-6 z-50">
         <button
             @click="showKritik = true"

@@ -4,7 +4,11 @@ import { Head } from "@inertiajs/vue3";
 import { CircleDollarSign, MapPin, TrendingUp } from "lucide-vue-next";
 const strukturs = [
     { jabatan: "Ketua", nama: "Nama Ketua", gambar: "" },
-    { jabatan: "Wakil Ketua", nama: "Nama Wakil Ketua", gambar: "" },
+    {
+        jabatan: "Wakil Ketua",
+        nama: "Dr. Sutono, S.Ag., M.Pd.L, M.E",
+        gambar: "/assets/images/Pengurus/WakilKetua.jpeg",
+    },
     { jabatan: "Sekretaris", nama: "Nama Sekretaris", gambar: "" },
     { jabatan: "Bendahara", nama: "Nama Bendahara", gambar: "" },
 ];
@@ -18,8 +22,9 @@ const strukturs = [
                     Wakaf Hari Ini,<br />Manfaat Sepanjang Masa
                 </h1>
                 <p class="max-w-xl text-lg mb-10">
-                    Pusat informasi dan layanan wakaf resmi BWI Kabupaten
-                    Gresik.
+                    Website resmi Badan Wakaf Indonesia Kabupaten Gresik sebagai
+                    pusat informasi, edukasi, dan layanan wakaf yang transparan
+                    dan amanah.
                 </p>
                 <a
                     href="#wakaf"
@@ -30,7 +35,6 @@ const strukturs = [
             </div>
         </section>
 
-        <!-- About -->
         <section id="about" class="py-20">
             <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
                 <div>
@@ -54,7 +58,6 @@ const strukturs = [
             </div>
         </section>
 
-        <!-- Wakaf -->
         <section id="wakaf" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-6">
                 <div class="text-center max-w-3xl mx-auto mb-16">
@@ -127,7 +130,7 @@ const strukturs = [
                         class="bg-white rounded-3xl p-6 text-center shadow-sm"
                     >
                         <img
-                            src="https://www.manypixels.co/static/illustrations/Islamic-People.svg"
+                            :src="struktur.gambar"
                             alt="Avatar pengurus"
                             class="w-24 h-24 mx-auto rounded-full mb-4 bg-secondary"
                         />

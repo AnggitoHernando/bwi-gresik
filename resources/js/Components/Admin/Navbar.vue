@@ -35,7 +35,6 @@ const namaUser = page.props.auth.user.name ?? "";
                     <ChevronDown class="w-4 h-4" />
                 </MenuButton>
 
-                <!-- DROPDOWN -->
                 <MenuItems
                     class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow z-50"
                 >

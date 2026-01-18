@@ -3,6 +3,8 @@ import { ref } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import KritikSaran from "@/Components/KritikSaran.vue";
 
+import { MapPin, Phone, Mail } from "lucide-vue-next";
+
 const mobileOpen = ref(false);
 const page = usePage();
 
@@ -40,7 +42,6 @@ const isActive = (href) => page.url === href;
                     </div>
                 </Link>
 
-                <!-- Desktop -->
                 <nav
                     class="hidden md:flex items-center gap-8 text-sm font-medium"
                 >
@@ -65,7 +66,6 @@ const isActive = (href) => page.url === href;
                     >
                 </nav>
 
-                <!-- Mobile button -->
                 <button
                     @click="mobileOpen = !mobileOpen"
                     class="md:hidden w-10 h-10 rounded-xl border flex items-center justify-center"
@@ -74,7 +74,6 @@ const isActive = (href) => page.url === href;
                 </button>
             </div>
 
-            <!-- Mobile Menu -->
             <div v-if="mobileOpen" class="md:hidden bg-white border-t">
                 <div class="px-6 py-4 space-y-4 text-sm">
                     <Link
@@ -110,7 +109,6 @@ const isActive = (href) => page.url === href;
         </main>
         <KritikSaran />
 
-        <!-- Footer -->
         <footer class="bg-primary mt-24">
             <div class="max-w-7xl mx-auto px-6 py-12">
                 <div class="grid md:grid-cols-3 gap-8">
@@ -141,16 +139,56 @@ const isActive = (href) => page.url === href;
                             Menu
                         </h4>
                         <ul class="space-y-2 text-sm text-secondary">
-                            <li><Link href="#about">Tentang Kami</Link></li>
-                            <li><Link href="#wakaf">Wakaf</Link></li>
-                            <li><Link href="/berita">Berita</Link></li>
+                            <li>
+                                <Link :href="route('homepage.profil')"
+                                    >Profil</Link
+                                >
+                            </li>
+                            <li>
+                                <Link
+                                    :href="
+                                        route('homepage.documentAdministrasi')
+                                    "
+                                    >Dokumen Administrasi</Link
+                                >
+                            </li>
                         </ul>
                     </div>
                     <div>
                         <h4 class="font-semibold text-white text-lg mb-4">
                             Kontak
                         </h4>
-                        <p class="text-sm text-secondary">Gresik, Jawa Timur</p>
+                        <ul class="space-y-5 text-secondary">
+                            <li class="flex items-start gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"
+                                >
+                                    <MapPin class="w-5 h-5 text-secondary" />
+                                </div>
+                                <span>
+                                    Kantor Kementerian Agama Kabupaten Gresik<br />
+                                    Jl. Dr. Wahidin Sudirohusodo, Gresik
+                                </span>
+                            </li>
+
+                            <li class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"
+                                >
+                                    <Phone class="w-5 h-5 text-secondary" />
+                                </div>
+                                <span>081278092387</span>
+                            </li>
+
+                            <li class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"
+                                >
+                                    <Mail class="w-5 h-5 text-secondary" />
+                                </div>
+                                <span>bwigresik@gmail.com</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div
