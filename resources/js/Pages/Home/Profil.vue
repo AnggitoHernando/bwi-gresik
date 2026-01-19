@@ -1,30 +1,39 @@
 <script setup>
 import HomeLayout from "@/Layouts/HomeLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import {
-    ShieldCheck,
-    HeartHandshake,
-    TrendingUp,
-    HandHeart,
-} from "lucide-vue-next";
+import { ref } from "vue";
+import ModalBaru from "@/Components/ModalBaru.vue";
 
-const values = [
+const activities = [
     {
-        title: "Amanah",
-        desc: "Menjaga dan mengelola wakaf dengan penuh tanggung jawab.",
-        icon: ShieldCheck,
+        title: "Ujian Kompetensi",
+        desc: "Ujian Kompetensi & Sertifikasi SKKNI Bidang Pengelolaan Wakaf 2",
+        image: "/assets/images/Kegiatan1.jpeg",
     },
     {
-        title: "Kolaboratif",
-        desc: "Bersinergi dengan berbagai pihak untuk kemaslahatan umat.",
-        icon: HeartHandshake,
+        title: "Pelantikan Pengurus",
+        desc: "Pelantikan Pengurus BWI Gresik 2023-2026",
+        image: "/assets/images/Kegiatan2.jpeg",
     },
     {
-        title: "Produktif",
-        desc: "Mengembangkan wakaf agar memberi manfaat berkelanjutan.",
-        icon: TrendingUp,
+        title: "Pengurus BWI",
+        desc: "Pengurus BWI Kab Gresik 2023-2026",
+        image: "/assets/images/pengurus/FotoPengurus.jpeg",
     },
 ];
+
+const showModal = ref(false);
+const selected = ref(null);
+
+const openModal = (item) => {
+    selected.value = item;
+    showModal.value = true;
+};
+
+const closeModal = () => {
+    showModal.value = false;
+    selected.value = null;
+};
 </script>
 
 <template>
@@ -229,6 +238,62 @@ const values = [
                             </ul>
                         </div>
                     </div>
+                </div>
+            </section>
+            <section class="bg-white">
+                <div class="max-w-6xl mx-auto px-6 py-20">
+                    <h2 class="text-3xl font-bold mb-4">
+                        Kegiatan BWI Kabupaten Gresik
+                    </h2>
+                    <p class="text-slate-600 mb-10 max-w-3xl">
+                        Dokumentasi berbagai kegiatan Badan Wakaf Indonesia
+                        Kabupaten Gresik.
+                    </p>
+
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div
+                            v-for="item in activities"
+                            :key="item.title"
+                            class="group cursor-pointer"
+                            @click="openModal(item)"
+                        >
+                            <div class="relative overflow-hidden rounded-3xl">
+                                <img
+                                    :src="item.image"
+                                    :alt="item.title"
+                                    class="w-full h-64 object-cover group-hover:scale-105 transition duration-500"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition"
+                                ></div>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-semibold">{{ item.title }}</p>
+                                <p class="text-sm text-slate-600">
+                                    {{ item.desc }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <ModalBaru
+                        :show="showModal"
+                        :close-on-outside="true"
+                        @close="closeModal"
+                    >
+                        <img
+                            :src="selected?.image"
+                            :alt="selected?.title"
+                            class="w-full max-h-[80vh] object-contain bg-black"
+                        />
+                        <div class="p-6">
+                            <DialogTitle class="text-xl font-bold">
+                                {{ selected?.title }}
+                            </DialogTitle>
+                            <p class="text-slate-600 mt-2">
+                                {{ selected?.desc }}
+                            </p>
+                        </div>
+                    </ModalBaru>
                 </div>
             </section>
 

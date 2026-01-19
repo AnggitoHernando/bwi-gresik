@@ -1,84 +1,30 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+import { ChevronDown } from "lucide-vue-next";
 
-const props = defineProps({
-    align: {
+defineProps({
+    labelDropdown: {
         type: String,
-        default: 'right',
-    },
-    width: {
-        type: String,
-        default: '48',
-    },
-    contentClasses: {
-        type: String,
-        default: 'py-1 bg-white',
+        default: "Menu",
     },
 });
-
-const closeOnEscape = (e) => {
-    if (open.value && e.key === 'Escape') {
-        open.value = false;
-    }
-};
-
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
-
-const widthClass = computed(() => {
-    return {
-        48: 'w-48',
-    }[props.width.toString()];
-});
-
-const alignmentClasses = computed(() => {
-    if (props.align === 'left') {
-        return 'ltr:origin-top-left rtl:origin-top-right start-0';
-    } else if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
-    } else {
-        return 'origin-top';
-    }
-});
-
-const open = ref(false);
 </script>
 
 <template>
-    <div class="relative">
-        <div @click="open = !open">
-            <slot name="trigger" />
-        </div>
-
-        <!-- Full Screen Dropdown Overlay -->
-        <div
-            v-show="open"
-            class="fixed inset-0 z-40"
-            @click="open = false"
-        ></div>
-
-        <Transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
+    <Menu as="div" class="relative inline-block text-left">
+        <MenuButton
+            class="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium bg-white text-gray-800 hover:bg-gray-50 transition"
         >
-            <div
-                v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
-                :class="[widthClass, alignmentClasses]"
-                style="display: none"
-                @click="open = false"
-            >
-                <div
-                    class="rounded-md ring-1 ring-black ring-opacity-5"
-                    :class="contentClasses"
-                >
-                    <slot name="content" />
-                </div>
+            {{ labelDropdown }}
+            <ChevronDown class="w-4 h-4" />
+        </MenuButton>
+
+        <MenuItems
+            class="z-50 focus:outline-none fixed inset-x-5 bottom rounded-2xl border bg-white shadow-xl md:absolute md:inset-auto md:right-0 md:mt-4 md:w-48 md:rounded-xl"
+        >
+            <div class="p-3">
+                <slot />
             </div>
-        </Transition>
-    </div>
+        </MenuItems>
+    </Menu>
 </template>

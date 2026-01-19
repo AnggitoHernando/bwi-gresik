@@ -12,16 +12,6 @@ const documents = [
         title: "SK Pembentukan BWI Kabupaten Gresik",
         file: "/assets/document/SK 90 Kab Gresik.pdf",
     },
-    {
-        id: 2,
-        title: "Berkas BWI Nasichun Amin",
-        file: "/assets/document/1. BERKAS BWI NASICHUN AMIN.pdf",
-    },
-    {
-        id: 3,
-        title: "Berkas BWI Moh Ismail",
-        file: "/assets/document/2. BERKAS BWI (MOH ISMAIL).pdf",
-    },
 ];
 const toggle = (id) => {
     activeId.value = activeId.value === id ? null : id;

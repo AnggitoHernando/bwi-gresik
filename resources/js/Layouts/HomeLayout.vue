@@ -4,6 +4,9 @@ import { Link, usePage } from "@inertiajs/vue3";
 import KritikSaran from "@/Components/KritikSaran.vue";
 
 import { MapPin, Phone, Mail } from "lucide-vue-next";
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import SmartLink from "@/Components/SmartLink.vue";
 
 const mobileOpen = ref(false);
 const page = usePage();
@@ -11,11 +14,6 @@ const page = usePage();
 const navs = [
     { name: "Home", href: "/", route: "homepage" },
     { name: "Profil", href: "/profil", route: "homepage.profil" },
-    {
-        name: "Dokumen Administrasi",
-        href: "/dokumen-administrasi",
-        route: "homepage.documentAdministrasi",
-    },
     { name: "Kontak", href: "/kontak", route: "homepage.kontak" },
 ];
 
@@ -58,6 +56,26 @@ const isActive = (href) => page.url === href;
                     >
                         {{ nav.name }}
                     </Link>
+                    <Dropdown label-dropdown="Data">
+                        <div class="grid gap-3">
+                            <Link
+                                :href="route('homepage.documentAdministrasi')"
+                                class="text-sm font-medium text-gray-700 transition"
+                                :class="
+                                    isActive('/dokumen-administrasi')
+                                        ? 'font-black text-primary'
+                                        : 'hover:text-primary'
+                                "
+                            >
+                                Dokumen Administrasi
+                            </Link>
+                            <SmartLink
+                                class="hover:text-primary"
+                                href="https://mandat.kemenaggresik.id/portal-data/data-tanah-wakaf-kabupaten-gresik-3"
+                                >Data Wakaf
+                            </SmartLink>
+                        </div>
+                    </Dropdown>
 
                     <Link
                         href="#wakaf"
@@ -77,23 +95,39 @@ const isActive = (href) => page.url === href;
             <div v-if="mobileOpen" class="md:hidden bg-white border-t">
                 <div class="px-6 py-4 space-y-4 text-sm">
                     <Link
-                        href="#about"
+                        v-for="nav in navs"
+                        :key="nav.href"
                         @click="mobileOpen = false"
+                        :href="route(nav.route)"
                         class="block"
-                        >Tentang Kami</Link
+                        :class="
+                            isActive(nav.href)
+                                ? 'font-black text-primary'
+                                : 'hover:text-primary'
+                        "
                     >
-                    <Link
-                        href="#wakaf"
-                        @click="mobileOpen = false"
-                        class="block"
-                        >Wakaf</Link
-                    >
-                    <Link
-                        href="/berita"
-                        @click="mobileOpen = false"
-                        class="block"
-                        >Berita</Link
-                    >
+                        {{ nav.name }}
+                    </Link>
+                    <Dropdown label-dropdown="Data">
+                        <div class="grid gap-3">
+                            <Link
+                                :href="route('homepage.documentAdministrasi')"
+                                class="text-sm font-medium text-gray-700 transition"
+                                :class="
+                                    isActive('/dokumen-administrasi')
+                                        ? 'font-black text-primary'
+                                        : 'hover:text-primary'
+                                "
+                            >
+                                Dokumen Administrasi
+                            </Link>
+                            <SmartLink
+                                class="hover:text-primary"
+                                href="https://mandat.kemenaggresik.id/portal-data/data-tanah-wakaf-kabupaten-gresik-3"
+                                >Data Wakaf
+                            </SmartLink>
+                        </div>
+                    </Dropdown>
                     <Link
                         href="#wakaf"
                         @click="mobileOpen = false"
