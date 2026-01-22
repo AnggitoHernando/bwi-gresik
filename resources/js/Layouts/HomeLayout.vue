@@ -14,6 +14,11 @@ const page = usePage();
 const navs = [
     { name: "Home", href: "/", route: "homepage" },
     { name: "Profil", href: "/profil", route: "homepage.profil" },
+    {
+        name: "Pendaftaran Nadzir",
+        href: "/pendaftaran-nadzir",
+        route: "pendaftaranNadzir",
+    },
     { name: "Kontak", href: "/kontak", route: "homepage.kontak" },
 ];
 
@@ -72,7 +77,7 @@ const isActive = (href) => page.url === href;
                             <SmartLink
                                 class="hover:text-primary"
                                 href="https://mandat.kemenaggresik.id/portal-data/data-tanah-wakaf-kabupaten-gresik-3"
-                                >Data Wakaf
+                                >Data Wakaf 2023
                             </SmartLink>
                         </div>
                     </Dropdown>

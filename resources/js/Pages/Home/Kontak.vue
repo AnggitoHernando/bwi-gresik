@@ -45,7 +45,7 @@ import { MapPin, Phone, Mail } from "lucide-vue-next";
                                 >
                                     <Phone class="w-5 h-5 text-primary" />
                                 </div>
-                                <span>081278092387</span>
+                                <span>085123777388</span>
                             </li>
 
                             <li class="flex items-center gap-4">
@@ -54,7 +54,7 @@ import { MapPin, Phone, Mail } from "lucide-vue-next";
                                 >
                                     <Mail class="w-5 h-5 text-primary" />
                                 </div>
-                                <span>bwigresik@gmail.com</span>
+                                <span>bwi.kabupatengresik@gmail.com</span>
                             </li>
                         </ul>
 

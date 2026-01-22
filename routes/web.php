@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\KritikSaranController;
+use App\Http\Controllers\PendaftaranNadzir;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,6 +16,7 @@ Route::get('/dashboard', function () {
 Route::get('/profil', [HomePageController::class, 'profil'])->name('homepage.profil');
 Route::get('/dokumen-administrasi', [HomePageController::class, 'documentAdministrasi'])->name('homepage.documentAdministrasi');
 Route::get('/kontak', [HomePageController::class, 'kontak'])->name('homepage.kontak');
+Route::get('/pendaftaran-nadzir', [PendaftaranNadzir::class, 'index'])->name('pendaftaranNadzir');
 
 Route::post('/kritik-saran', [KritikSaranController::class, 'store'])
     ->middleware('throttle:1,1')
