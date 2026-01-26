@@ -33,7 +33,10 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout
+        title="Masuk ke Sistem"
+        description="Gunakan akun resmi untuk mengakses layanan wakaf"
+    >
         <Head title="Log in" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
