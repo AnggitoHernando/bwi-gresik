@@ -68,7 +68,7 @@ const submit = () => {
                     placeholder="Masukkan password"
                     id="password"
                     v-model="form.password"
-                    class="border rounded w-full px-3 py-2 pr-10"
+                    class="rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary w-full"
                 />
 
                 <button

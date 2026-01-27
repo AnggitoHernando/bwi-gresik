@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { LayoutDashboard, MessageSquare } from "lucide-vue-next";
+import { LayoutDashboard, MessageSquare, User } from "lucide-vue-next";
 const props = defineProps({
     collapsed: Boolean,
     mobile: Boolean,
@@ -22,8 +22,8 @@ defineEmits(["close"]);
                     ? 'w-64 translate-x-0'
                     : '-translate-x-full w-64'
                 : collapsed
-                ? 'w-20'
-                : 'w-64',
+                  ? 'w-20'
+                  : 'w-64',
         ]"
     >
         <div class="h-16 flex items-center justify-between px-4">
@@ -82,6 +82,19 @@ defineEmits(["close"]);
                 >
                     <MessageSquare class="w-5 h-5" />
                     <span v-if="!collapsed">Kritik & Saran</span>
+                </Link>
+            </div>
+
+            <div
+                class="rounded"
+                :class="[pageNow == '/nadzir' ? active : 'hover:bg-secondary']"
+            >
+                <Link
+                    :href="route('admin.nadzir.index')"
+                    class="flex items-center gap-3 p-2"
+                >
+                    <User class="w-5 h-5" />
+                    <span v-if="!collapsed">Nadzir</span>
                 </Link>
             </div>
         </nav>

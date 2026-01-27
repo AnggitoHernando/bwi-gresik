@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\KritikSaranController;
+use App\Http\Controllers\NadzirController;
 use App\Http\Controllers\PendaftaranNadzir;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/kritik-saran', [KritikSaranController::class, 'index'])->name('admin.kritik.index');
     Route::delete('/kritik-saran/{id}', [KritikSaranController::class, 'destroy'])->name('admin.kritik.destroy');
+
+    Route::get('/nadzir', [NadzirController::class, 'index'])->name('admin.nadzir.index');
 });
 
 require __DIR__ . '/auth.php';

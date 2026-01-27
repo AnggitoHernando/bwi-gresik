@@ -11,7 +11,7 @@ defineProps({
     <div
         class="min-h-screen bg-slate-100 flex items-center justify-center px-4"
     >
-        <div class="w-full max-w-md">
+        <div class="w-full max-w-2xl">
             <div class="text-center mb-6">
                 <div class="flex justify-center">
                     <Link href="/">

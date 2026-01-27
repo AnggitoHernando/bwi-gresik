@@ -3,16 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nadzir;
+use App\Models\KritikSaran;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class NadzirController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $items = KritikSaran::query()
+            ->filter($request)
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('Admin/Nadzir', [
+            'items' => $items,
+            'filters' => $request->only([
+                'search',
+                'sort',
+                'direction',
+                'from',
+                'to',
+            ])
+        ]);
     }
 
     /**

@@ -13,6 +13,8 @@ import {
     ListboxOption,
 } from "@headlessui/vue";
 import { ChevronDown } from "lucide-vue-next";
+import Combobox from "@/Components/Combobox.vue";
+import FileUpload from "@/Components/FileUpload.vue";
 
 const props = defineProps({
     listKecamatan: {
@@ -29,6 +31,8 @@ const form = useForm({
     email: "",
     password: "",
     password_confirmation: "",
+    checklist_pendaftaran_nadzir: "",
+    daftar_tanah_wakaf: "",
 });
 
 const templates = [
@@ -46,6 +50,16 @@ const templates = [
         id: 3,
         title: "Surat Permohonan Tanda Bukti Daftar Nadzir Ke KUA dan BWI",
         file: "/assets/document/template/SURAT_PERMOHONAN_TANDA_BUKTI_DAFTAR_NAZHIR_KE_KUA_&_BWI_KAB_GRESIK.docx",
+    },
+    {
+        id: 4,
+        title: "Daftar Kekayaan Di Tanah Wakaf (Khusus Nadzir Lembaga/Badan)",
+        file: "/assets/document/template/DAFTAR KEKAYAAN DI TANAH WAKAF.docx",
+    },
+    {
+        id: 5,
+        title: "Surat Pernyataan Siap Diaudit (Khusus Nadzir Lembaga/Badan)",
+        file: "/assets/document/template/SURAT PERNYATAAN BERSEDIA DIAUDIT.docx",
     },
 ];
 
@@ -178,6 +192,40 @@ const submit = () => {
 
             <div class="mt-4">
                 <InputLabel for="kecamatan" value="Kecamatan" />
+                <Combobox
+                    v-model="form.kecamatan"
+                    :options="listKecamatan"
+                    label-key="nama_kecamatan"
+                    value-key="id"
+                    placeholder="Ketik Kecamatan"
+                />
+                <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel
+                    for="checklist_pendaftaran_nadzir"
+                    value="Checklist Pendaftaran Nadzir"
+                />
+                <FileUpload
+                    v-model="form.checklist_pendaftaran_nadzir"
+                    accept=".pdf"
+                    :maxSize="10"
+                />
+
+                <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel
+                    for="daftar_tanah_wakaf"
+                    value="Daftar Tanah Wakaf"
+                />
+                <FileUpload
+                    v-model="form.daftar_tanah_wakaf"
+                    accept=".xlsx ,.xls"
+                    :maxSize="10"
+                />
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -238,7 +286,7 @@ const submit = () => {
                     :href="route('login')"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                    Already registered?
+                    Sudah Punya Akun?
                 </Link>
 
                 <PrimaryButton
@@ -246,7 +294,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Register
+                    Daftar
                 </PrimaryButton>
             </div>
         </form>
