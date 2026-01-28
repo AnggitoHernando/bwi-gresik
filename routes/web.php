@@ -18,6 +18,7 @@ Route::get('/profil', [HomePageController::class, 'profil'])->name('homepage.pro
 Route::get('/dokumen-administrasi', [HomePageController::class, 'documentAdministrasi'])->name('homepage.documentAdministrasi');
 Route::get('/kontak', [HomePageController::class, 'kontak'])->name('homepage.kontak');
 Route::get('/pendaftaran-nadzir', [PendaftaranNadzir::class, 'index'])->name('pendaftaranNadzir');
+Route::post('/submit-nadzir', [PendaftaranNadzir::class, 'store'])->name('pendaftaranNadzir.store');
 
 Route::post('/kritik-saran', [KritikSaranController::class, 'store'])
     ->middleware('throttle:1,1')
