@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kecamatan;
+use App\Models\Nadzir;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class PendaftaranNadzir extends Controller
 {
@@ -54,5 +58,27 @@ class PendaftaranNadzir extends Controller
                 'email.email' => 'Format email tidak valid.',
             ]
         );
+
+        DB::transaction(function () use ($request) {
+            $role = Role::where('name', 'nadzir')->firstOrFail();
+            $user = User::create([
+                'role_id' => $role->id,
+                'name' => $request->namaNadzir,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $userId = $user->id;
+
+            Nadzir::create([
+                'user_id' => $userId,
+                'nama_nadzir' => $request->namaNadzir,
+                'jenis_nadzir' => $request->jenisNadzir,
+                'nama_lembaga' => $request->namaLembaga,
+                'status' => 'pending',
+                'kecamatan_id' => $request->input('kecamatan.id'),
+            ]);
+        });
+        return redirect()->back()->with('success', 'Pendaftaran Nadzir Berhasil');
     }
 }
