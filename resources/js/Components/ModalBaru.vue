@@ -13,6 +13,14 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    width: {
+        type: String,
+        default: "max-w-lg",
+    },
+    rounded: {
+        type: String,
+        default: "rounded-3xl",
+    },
 });
 
 const emit = defineEmits(["close"]);
@@ -49,8 +57,21 @@ const handleClose = () => {
                     leave-to="opacity-0 scale-95"
                 >
                     <DialogPanel
-                        class="w-full max-w-5xl rounded-3xl bg-white overflow-hidden shadow-xl"
+                        :class="`w-full ${width} ${rounded} bg-white overflow-hidden shadow-xl`"
                     >
+                        <div
+                            v-if="!props.closeOnOutside"
+                            class="px-5 py-3 flex items-center justify-between"
+                        >
+                            <slot name="title" />
+                            <button
+                                type="button"
+                                @click="$emit('close')"
+                                class="text-gray-400 hover:text-gray-600"
+                            >
+                                ✕
+                            </button>
+                        </div>
                         <slot />
                     </DialogPanel>
                 </TransitionChild>

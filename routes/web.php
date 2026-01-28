@@ -5,6 +5,7 @@ use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\KritikSaranController;
 use App\Http\Controllers\NadzirController;
 use App\Http\Controllers\PendaftaranNadzir;
+use App\Http\Controllers\TypeDocumentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/kritik-saran/{id}', [KritikSaranController::class, 'destroy'])->name('admin.kritik.destroy');
 
     Route::get('/nadzir', [NadzirController::class, 'index'])->name('admin.nadzir.index');
+
+    Route::get('/type-document', [TypeDocumentController::class, 'index'])->name('admin.document.index');
 });
 
 require __DIR__ . '/auth.php';

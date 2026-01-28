@@ -3,7 +3,10 @@ import { ref } from "vue";
 import { UploadCloud, X } from "lucide-vue-next";
 
 const props = defineProps({
-    modelValue: File,
+    modelValue: {
+        type: [File, null],
+        default: null,
+    },
     accept: {
         type: String,
         default: ".pdf,.jpg,.jpeg,.png",

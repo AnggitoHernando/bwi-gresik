@@ -279,6 +279,7 @@ const closeModal = () => {
                         :show="showModal"
                         :close-on-outside="true"
                         @close="closeModal"
+                        width="max-w-5xl"
                     >
                         <img
                             :src="selected?.image"
@@ -286,9 +287,9 @@ const closeModal = () => {
                             class="w-full max-h-[80vh] object-contain bg-black"
                         />
                         <div class="p-6">
-                            <DialogTitle class="text-xl font-bold">
+                            <div class="text-xl font-bold">
                                 {{ selected?.title }}
-                            </DialogTitle>
+                            </div>
                             <p class="text-slate-600 mt-2">
                                 {{ selected?.desc }}
                             </p>

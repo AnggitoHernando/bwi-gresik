@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nadzir_documents', function (Blueprint $table) {
+        Schema::create('type_documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('nadzir_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('type_document_id')->constrained()->cascadeOnDelete();
-            $table->string('file_path');
+            $table->string('jenis_nadzir');
+            $table->string('nama_dokumen');
+            $table->string('extension');
+            $table->string('template')->nullable();
             $table->timestamps();
-
-            $table->unique(['nadzir_id', 'type_document_id']);
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nadzir_documents');
+        Schema::dropIfExists('type_documents');
     }
 };

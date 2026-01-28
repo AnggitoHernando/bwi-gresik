@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { LayoutDashboard, MessageSquare, User } from "lucide-vue-next";
+import { LayoutDashboard, MessageSquare, User, Dock } from "lucide-vue-next";
 const props = defineProps({
     collapsed: Boolean,
     mobile: Boolean,
@@ -82,6 +82,21 @@ defineEmits(["close"]);
                 >
                     <MessageSquare class="w-5 h-5" />
                     <span v-if="!collapsed">Kritik & Saran</span>
+                </Link>
+            </div>
+
+            <div
+                class="rounded"
+                :class="[
+                    pageNow == '/type-document' ? active : 'hover:bg-secondary',
+                ]"
+            >
+                <Link
+                    :href="route('admin.document.index')"
+                    class="flex items-center gap-3 p-2"
+                >
+                    <Dock class="w-5 h-5" />
+                    <span v-if="!collapsed">Dokumen Persyaratan</span>
                 </Link>
             </div>
 
