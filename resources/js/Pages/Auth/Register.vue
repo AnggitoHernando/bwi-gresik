@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import {
     Listbox,
     ListboxButton,
@@ -16,7 +16,10 @@ import { ChevronDown } from "lucide-vue-next";
 import Combobox from "@/Components/Combobox.vue";
 import { Eye, EyeOff } from "lucide-vue-next";
 const showPassword = ref(false);
+const page = usePage();
+import { useSwal } from "@/Composables/useSwal";
 
+const { success, error } = useSwal();
 const props = defineProps({
     listKecamatan: {
         type: Array,
@@ -43,10 +46,20 @@ const form = useForm({
 
 const submit = () => {
     form.post(route("pendaftaranNadzir.store"), {
-        onFinish: () => form.reset("password", "password_confirmation"),
+        onFinish: () => {
+            form.reset();
+        },
     });
-    console.log(form);
 };
+
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash?.success) success(flash.success);
+        if (flash?.error) error(flash.error);
+    },
+    { deep: true },
+);
 </script>
 
 <template>

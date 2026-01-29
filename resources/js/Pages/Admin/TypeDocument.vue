@@ -5,7 +5,7 @@ import Pagination from "@/Layouts/Table/Pagination.vue";
 import TableFilters from "@/Layouts/Table/TableFilters.vue";
 import { Head, router, useForm, usePage } from "@inertiajs/vue3";
 import ActionButton from "@/Components/ButtonWithIcon.vue";
-import { Trash2 } from "lucide-vue-next";
+import { Trash2, PenLine, X, FileText } from "lucide-vue-next";
 import { ref, watch } from "vue";
 import { useSwal } from "@/Composables/useSwal";
 import InputError from "@/Components/InputError.vue";
@@ -54,14 +54,43 @@ const search = ref("");
 const loading = ref(false);
 
 const form = useForm({
+    id: "",
     jenisNadzir: "",
     namaDokumen: "",
     template: null,
 });
 
-const openModal = () => {
-    selectedDocument.value = null;
+const fieldMap = {
+    id: "id",
+    jenisNadzir: "jenis_nadzir",
+    namaDokumen: "nama_dokumen",
+    template: "template",
+};
+
+const assignForm = (row) => {
+    Object.keys(fieldMap).forEach((key) => {
+        if (row[fieldMap[key]] === "") {
+            form[key] = null;
+        } else {
+            form[key] = row[fieldMap[key]] ?? "";
+        }
+    });
+};
+
+const openModal = (row) => {
+    if (row) {
+        selectedDocument.value = row;
+        assignForm(row);
+    } else {
+        selectedDocument.value = null;
+        form.reset();
+    }
     showModal.value = true;
+};
+
+const fileNameFromPath = (path) => {
+    if (!path) return "";
+    return path.split("/").pop();
 };
 
 watch(
@@ -85,14 +114,30 @@ watch(
 );
 
 const saveData = () => {
-    form.post(route("admin.document.store"), {
-        forceFormData: true,
-        onSuccess: () => {
-            form.reset();
+    if (form.id) {
+        const hasNewFile = form.template instanceof File;
+        if (!hasNewFile) {
             form.template = null;
-            showModal.value = false;
-        },
-    });
+        }
+        form.post(route("admin.document.update", form.id), {
+            forceFormData: true,
+            _method: "patch",
+            onSuccess: () => {
+                form.reset();
+                form.template = null;
+                showModal.value = false;
+            },
+        });
+    } else {
+        form.post(route("admin.document.store"), {
+            forceFormData: true,
+            onSuccess: () => {
+                form.reset();
+                form.template = null;
+                showModal.value = false;
+            },
+        });
+    }
     return;
 };
 
@@ -105,6 +150,10 @@ function deleteItem(row) {
         }
     });
 }
+
+const removeFile = () => {
+    form.template = null;
+};
 </script>
 
 <template>
@@ -123,10 +172,38 @@ function deleteItem(row) {
             :columns="columns"
             :rows="items.data"
             :filters="filters"
-            route-name="admin.kritik.index"
+            route-name="admin.document.index"
         >
+            <template #cell-template="{ row }">
+                <div class="flex items-center gap-2">
+                    <FileText class="h-5 w-5 text-slate-500" />
+                    <p
+                        v-if="row.template"
+                        class="text-sm text-slate-700 truncate max-w-[220px]"
+                    >
+                        <a :href="`/storage/${row.template}`">
+                            {{ fileNameFromPath(row.template) }}
+                        </a>
+                    </p>
+                    <p
+                        v-else
+                        class="text-sm text-slate-700 truncate max-w-[220px]"
+                    >
+                        Tidak Ada File Template
+                    </p>
+                </div>
+            </template>
             <template #cell-actions="{ row }">
                 <div class="flex items-center gap-2">
+                    <ActionButton
+                        title="Edit Data"
+                        class="bg-blue-700"
+                        @click="openModal(row)"
+                    >
+                        <template #icon>
+                            <PenLine class="w-4 h-4 text-white" />
+                        </template>
+                    </ActionButton>
                     <ActionButton
                         title="Hapus Data"
                         class="bg-red-500"
@@ -196,6 +273,7 @@ function deleteItem(row) {
                             for="template"
                             value="Template (Jika Ada)"
                         />
+
                         <FileUpload
                             v-model="form.template"
                             accept=".pdf,.jpg,.jpeg,.png,.doc,.xls,.xlsx"

@@ -1,10 +1,10 @@
 <script setup>
-import { ref } from "vue";
-import { UploadCloud, X } from "lucide-vue-next";
+import { computed, ref } from "vue";
+import { UploadCloud, FileText, X } from "lucide-vue-next";
 
 const props = defineProps({
     modelValue: {
-        type: [File, null],
+        type: [File, String, null],
         default: null,
     },
     accept: {
@@ -19,25 +19,30 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
-const file = ref(null);
 const error = ref(null);
 
-const handleFile = (e) => {
-    const selected = e.target.files?.[0] || e.dataTransfer?.files?.[0];
-    if (!selected) return;
+const isExistingFile = computed(() => typeof props.modelValue === "string");
+const isNewFile = computed(() => props.modelValue instanceof File);
 
-    if (selected.size > props.maxSize * 1024 * 1024) {
+const fileNameFromPath = (path) => {
+    if (!path) return "";
+    return path.split("/").pop();
+};
+
+const handleFile = (e) => {
+    const file = e.target.files?.[0] || e.dataTransfer?.files?.[0];
+    if (!file) return;
+
+    if (file.size > props.maxSize * 1024 * 1024) {
         error.value = `Ukuran maksimal ${props.maxSize}MB`;
         return;
     }
 
-    file.value = selected;
     error.value = null;
-    emit("update:modelValue", selected);
+    emit("update:modelValue", file);
 };
 
 const removeFile = () => {
-    file.value = null;
     emit("update:modelValue", null);
 };
 </script>
@@ -45,17 +50,16 @@ const removeFile = () => {
 <template>
     <div class="space-y-2">
         <label
-            class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 text-center transition hover:border-primary hover:bg-slate-50"
+            v-if="!modelValue"
+            class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-white p-6 text-center transition hover:border-primary hover:bg-slate-50"
             @dragover.prevent
             @drop.prevent="handleFile"
         >
             <UploadCloud class="h-8 w-8 text-slate-500" />
-
             <p class="text-sm text-slate-600">
                 <span class="font-semibold text-primary">Klik upload</span>
                 atau drag file ke sini
             </p>
-
             <p class="text-xs text-slate-400">
                 {{ accept }} • Max {{ maxSize }}MB
             </p>
@@ -69,26 +73,54 @@ const removeFile = () => {
         </label>
 
         <div
-            v-if="file"
+            v-if="isExistingFile"
+            class="flex items-center justify-between rounded-lg border bg-slate-50 px-4 py-2"
+        >
+            <div class="flex items-center gap-2">
+                <FileText class="h-5 w-5 text-slate-500" />
+                <p class="text-sm text-slate-700 truncate max-w-[220px]">
+                    {{ fileNameFromPath(modelValue) }}
+                </p>
+            </div>
+
+            <div class="flex gap-3 text-xs">
+                <a
+                    :href="`/storage/${modelValue}`"
+                    target="_blank"
+                    class="text-blue-600 hover:underline"
+                >
+                    Lihat
+                </a>
+
+                <button
+                    type="button"
+                    @click="removeFile"
+                    class="text-red-600 hover:underline"
+                >
+                    Ganti
+                </button>
+            </div>
+        </div>
+
+        <div
+            v-if="isNewFile"
             class="flex items-center justify-between rounded-lg border bg-slate-50 px-4 py-2"
         >
             <div>
-                <p
-                    class="text-sm font-medium text-slate-700 truncate max-w-[220px]"
-                >
-                    {{ file.name }}
+                <p class="text-sm font-medium truncate max-w-[220px]">
+                    {{ modelValue.name }}
                 </p>
                 <p class="text-xs text-slate-500">
-                    {{ (file.size / 1024 / 1024).toFixed(2) }} MB
+                    {{ (modelValue.size / 1024 / 1024).toFixed(2) }} MB
                 </p>
             </div>
 
             <button
                 type="button"
                 @click="removeFile"
-                class="rounded-full p-1 text-slate-500 hover:bg-red-100 hover:text-red-600"
+                class="text-xs text-red-600 hover:underline"
             >
-                <X class="h-4 w-4" />
+                Hapus
             </button>
         </div>
 

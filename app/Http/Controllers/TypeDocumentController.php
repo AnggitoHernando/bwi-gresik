@@ -123,7 +123,65 @@ class TypeDocumentController extends Controller
      */
     public function update(Request $request, TypeDocument $typeDocument)
     {
-        //
+        $validated = $request->validate([
+            'jenisNadzir' => [
+                'required',
+                'string',
+                'in:Perorangan,Organisasi,Badan Hukum,Semua'
+            ],
+            'namaDokumen' => ['required', 'string'],
+            'template' => [
+                'nullable',
+                'file',
+                'max:5120',
+                'mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx,zip',
+            ],
+        ]);
+
+        $oldJenis = $typeDocument->jenis_nadzir;
+        $newJenis = $validated['jenisNadzir'];
+
+        $typeDocument->jenis_nadzir = $newJenis;
+        $typeDocument->nama_dokumen = $validated['namaDokumen'];
+
+        $basePath = 'template-dokumen/' . Str::slug($newJenis);
+
+        if ($request->hasFile('template')) {
+            $file = $request->file('template');
+
+            $originalName = pathinfo(
+                $file->getClientOriginalName(),
+                PATHINFO_FILENAME
+            );
+
+            $extension = $file->getClientOriginalExtension();
+
+            $safeName = Str::slug($originalName)
+                . '-' . now()->format('YmdHis');
+
+            $filename = $safeName . '.' . $extension;
+
+            if ($typeDocument->template && Storage::disk('public')->exists($typeDocument->template)) {
+                Storage::disk('public')->delete($typeDocument->template);
+            }
+
+            $path = $file->storeAs($basePath, $filename, 'public');
+            $typeDocument->template = $path;
+        } elseif (
+            $oldJenis !== $newJenis &&
+            $typeDocument->template &&
+            Storage::disk('public')->exists($typeDocument->template)
+        ) {
+            $filename = basename($typeDocument->template);
+            $newPath = $basePath . '/' . $filename;
+
+            Storage::disk('public')->move($typeDocument->template, $newPath);
+            $typeDocument->template = $newPath;
+        }
+
+        $typeDocument->save();
+
+        return back()->with('success', 'Dokumen berhasil diperbarui');
     }
 
     /**
