@@ -30,7 +30,7 @@ class PendaftaranNadzir extends Controller
                 'jenisNadzir' => [
                     'required',
                     'string',
-                    'in:Perorangan,Lembaga,Badan'
+                    'in:Perorangan,Organisasi,Badan Hukum'
                 ],
                 'namaNadzir' => 'required|string|max:255',
                 'namaLembaga' => [

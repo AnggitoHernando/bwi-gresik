@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/nadzir', [NadzirController::class, 'index'])->name('admin.nadzir.index');
 
     Route::get('/type-document', [TypeDocumentController::class, 'index'])->name('admin.document.index');
+    Route::post('/save-document', [TypeDocumentController::class, 'store'])->name('admin.document.store');
 });
 
 require __DIR__ . '/auth.php';

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\TypeDocument;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class TypeDocumentController extends Controller
 {
@@ -43,7 +45,59 @@ class TypeDocumentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'jenisNadzir' => [
+                'required',
+                'string',
+                'in:Perorangan,Organisasi,Badan Hukum,Semua'
+            ],
+
+            'namaDokumen' => [
+                'required',
+                'string',
+                'max:150',
+            ],
+            'template' => [
+                'nullable',
+                'file',
+                'max:5120',
+                'mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx,zip',
+            ],
+
+        ], [
+            'jenisNadzir.required' => 'Jenis nadzir wajib dipilih.',
+            'namaDokumen.required' => 'Nama dokumen wajib diisi.',
+        ]);
+
+        $extension = "";
+        $path = "";
+        if ($request->hasFile('template')) {
+            $file = $request->file('template');
+            $originalName = pathinfo(
+                $file->getClientOriginalName(),
+                PATHINFO_FILENAME
+            );
+            $safeName = Str::slug($originalName);
+
+            $extension = $file->getClientOriginalExtension();
+
+            $filename = $safeName . '.' . $extension;
+
+            $path = $file->storeAs(
+                "template-dokumen/{$request->jenisNadzir}",
+                $filename,
+                'public'
+            );
+        }
+
+        TypeDocument::create([
+            'jenis_nadzir' => $validated['jenisNadzir'],
+            'nama_dokumen' => $validated['namaDokumen'],
+            'extension'    => $extension,
+            'template'    => $path,
+        ]);
+
+        return redirect()->back()->with('success', 'Dokumen Template Berhasil Disimpan');
     }
 
     /**
