@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class TypeDocumentController extends Controller
 {
@@ -77,7 +78,8 @@ class TypeDocumentController extends Controller
                 $file->getClientOriginalName(),
                 PATHINFO_FILENAME
             );
-            $safeName = Str::slug($originalName);
+            $safeName = Str::slug($originalName)
+                . '-' . Carbon::now()->format('Ymd-His');
 
             $extension = $file->getClientOriginalExtension();
 
@@ -129,6 +131,14 @@ class TypeDocumentController extends Controller
      */
     public function destroy(TypeDocument $typeDocument)
     {
-        //
+        if ($typeDocument->template && Storage::disk('public')->exists($typeDocument->template)) {
+            Storage::disk('public')->delete($typeDocument->template);
+        }
+
+        $typeDocument->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Dokumen berhasil dihapus');
     }
 }

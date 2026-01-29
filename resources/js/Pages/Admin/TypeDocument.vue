@@ -89,6 +89,8 @@ const saveData = () => {
         forceFormData: true,
         onSuccess: () => {
             form.reset();
+            form.template = null;
+            showModal.value = false;
         },
     });
     return;
@@ -97,10 +99,8 @@ const saveData = () => {
 function deleteItem(row) {
     confirm("Data akan dihapus permanen!").then((result) => {
         if (result.isConfirmed) {
-            router.delete(route("admin.document.destroy", row.id), {
-                onSuccess: () => {
-                    success("Data berhasil dihapus");
-                },
+            router.delete(route("admin.document.destroy", row), {
+                onSuccess: () => {},
             });
         }
     });
