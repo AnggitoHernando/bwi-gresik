@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('nadzir_id')->constrained()->cascadeOnDelete();
             $table->foreignId('type_document_id')->constrained()->cascadeOnDelete();
             $table->string('file_path');
+            $table->tinyInteger('is_verified')
+                ->default(0)
+                ->comment('0 = belum verified, 1 = sudah verified');
             $table->timestamps();
 
             $table->unique(['nadzir_id', 'type_document_id']);

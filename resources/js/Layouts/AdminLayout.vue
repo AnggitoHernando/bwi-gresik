@@ -1,13 +1,25 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import Sidebar from "@/Components/Admin/Sidebar.vue";
 import Navbar from "@/Components/Admin/Navbar.vue";
+import { useSwal } from "@/Composables/useSwal";
 const page = usePage();
 const pageNow = ref(page.url);
+console.log(page.props);
 
 const sidebarCollapsed = ref(false);
 const mobileSidebarOpen = ref(false);
+const { success, error } = useSwal();
+
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash?.success) success(flash.success);
+        if (flash?.error) error(flash.error);
+    },
+    { deep: true },
+);
 </script>
 
 <template>

@@ -28,7 +28,7 @@ const search = ref("");
 
 watch(search, (value) => {
     router.get(
-        route("admin.kritik.index"),
+        route("admin.nadzir.index"),
         { search: value },
         {
             preserveState: true,

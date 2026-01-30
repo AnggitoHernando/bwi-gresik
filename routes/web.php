@@ -6,15 +6,15 @@ use App\Http\Controllers\KritikSaranController;
 use App\Http\Controllers\NadzirController;
 use App\Http\Controllers\PendaftaranNadzir;
 use App\Http\Controllers\TypeDocumentController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\JenisNadzirController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [HomePageController::class, 'index'])->name('homepage');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/profil', [HomePageController::class, 'profil'])->name('homepage.profil');
 Route::get('/dokumen-administrasi', [HomePageController::class, 'documentAdministrasi'])->name('homepage.documentAdministrasi');
 Route::get('/kontak', [HomePageController::class, 'kontak'])->name('homepage.kontak');
@@ -34,6 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/kritik-saran/{id}', [KritikSaranController::class, 'destroy'])->name('admin.kritik.destroy');
 
     Route::get('/nadzir', [NadzirController::class, 'index'])->name('admin.nadzir.index');
+
+    Route::get('/jenis-nadzir', [JenisNadzirController::class, 'index'])->name('admin.jenisNadzir.index');
+    Route::post('/save-jenis-nadzir', [JenisNadzirController::class, 'store'])->name('admin.jenisNadzir.store');
+    Route::delete('/delete-jenis-nadzir/{jenisNadzir}', [JenisNadzirController::class, 'destroy'])->name('admin.jenisNadzir.destroy');
+    Route::patch('/update-jenis-nadzir/{jenisNadzir}', [JenisNadzirController::class, 'update'])->name('admin.jenisNadzir.update');
+    Route::patch('/non-active/{jenisNadzir}', [JenisNadzirController::class, 'nonActive'])->name('admin.jenisNadzir.nonActive');
+    Route::patch('/active/{jenisNadzir}', [JenisNadzirController::class, 'active'])->name('admin.jenisNadzir.active');
 
     Route::get('/type-document', [TypeDocumentController::class, 'index'])->name('admin.document.index');
     Route::post('/save-document', [TypeDocumentController::class, 'store'])->name('admin.document.store');

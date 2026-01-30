@@ -5,45 +5,28 @@ import Pagination from "@/Layouts/Table/Pagination.vue";
 import TableFilters from "@/Layouts/Table/TableFilters.vue";
 import { Head, router, useForm, usePage } from "@inertiajs/vue3";
 import ActionButton from "@/Components/ButtonWithIcon.vue";
-import { Trash2, PenLine, X, FileText } from "lucide-vue-next";
-import { ref, watch, computed } from "vue";
+import { Trash2, PenLine, CircleX, CircleCheck } from "lucide-vue-next";
+import { ref, watch } from "vue";
 import { useSwal } from "@/Composables/useSwal";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Modal from "@/Components/ModalBaru.vue";
-import Select from "@/Components/Select.vue";
-import FileUpload from "@/Components/FileUpload.vue";
 
 const { confirm, success } = useSwal();
-const props = defineProps({
-    items: {
-        type: Object,
-        default: () => ({}),
-    },
-    filters: {
-        type: Object,
-        default: () => ({}),
-    },
-    listJenisNadzir: {
-        type: Array,
-        default: () => [],
-    },
+const { items, filters } = defineProps({
+    items: Object,
+    filters: Object,
 });
 const selectedDocument = ref(null);
 const showModal = ref(false);
 const page = usePage();
-
-const optionNadzirs = computed(() => [
-    { id: 0, nama: "Semua" },
-    ...props.listJenisNadzir,
-]);
+const role = page.props.auth.user.role.name;
 
 const columns = [
-    { label: "Jenis Nadzir", key: "jenis_nadzir", sortable: true },
-    { label: "Nama Dokumen", key: "nama_dokumen", sortable: true },
-    { label: "Template", key: "template", sortable: false },
+    { label: "Nama", key: "nama", sortable: true },
+    { label: "Status", key: "is_active", sortable: true },
     { label: "Aksi", key: "actions" },
 ];
 const search = ref("");
@@ -51,16 +34,14 @@ const loading = ref(false);
 
 const form = useForm({
     id: "",
-    jenisNadzir: "",
-    namaDokumen: "",
-    template: null,
+    nama: "",
+    isActive: "",
 });
 
 const fieldMap = {
     id: "id",
-    jenisNadzir: "jenis_nadzir",
-    namaDokumen: "nama_dokumen",
-    template: "template",
+    nama: "nama",
+    isActive: "is_active",
 };
 
 const assignForm = (row) => {
@@ -84,11 +65,6 @@ const openModal = (row) => {
     showModal.value = true;
 };
 
-const fileNameFromPath = (path) => {
-    if (!path) return "";
-    return path.split("/").pop();
-};
-
 watch(
     () => page.props.flash,
     (flash) => {
@@ -100,7 +76,7 @@ watch(
 
 watch(search, (value) => {
     router.get(
-        route("admin.document.index"),
+        route("admin.jenisNadzir.index"),
         { search: value },
         {
             preserveState: true,
@@ -111,25 +87,16 @@ watch(search, (value) => {
 
 const saveData = () => {
     if (form.id) {
-        const hasNewFile = form.template instanceof File;
-        if (!hasNewFile) {
-            form.template = null;
-        }
-        form.post(route("admin.document.update", form.id), {
-            forceFormData: true,
-            _method: "patch",
+        form.patch(route("admin.jenisNadzir.update", form.id), {
             onSuccess: () => {
                 form.reset();
-                form.template = null;
                 showModal.value = false;
             },
         });
     } else {
-        form.post(route("admin.document.store"), {
-            forceFormData: true,
+        form.post(route("admin.jenisNadzir.store"), {
             onSuccess: () => {
                 form.reset();
-                form.template = null;
                 showModal.value = false;
             },
         });
@@ -137,57 +104,55 @@ const saveData = () => {
     return;
 };
 
+const changeStatus = (jenisNadzir, status) => {
+    if (status === "Non Active") {
+        form.patch(route("admin.jenisNadzir.nonActive", jenisNadzir), {
+            onSuccess: () => {},
+        });
+    } else {
+        form.patch(route("admin.jenisNadzir.active", jenisNadzir), {
+            onSuccess: () => {},
+        });
+    }
+};
+
 function deleteItem(row) {
     confirm("Data akan dihapus permanen!").then((result) => {
         if (result.isConfirmed) {
-            router.delete(route("admin.document.destroy", row), {
+            router.delete(route("admin.jenisNadzir.destroy", row), {
                 onSuccess: () => {},
             });
         }
     });
 }
-
-const removeFile = () => {
-    form.template = null;
-};
 </script>
 
 <template>
     <AdminLayout>
-        <Head title="Dokumen Persyaratan" />
-        <h1 class="text-2xl font-bold mb-4">Dokumen Persyaratan</h1>
+        <Head title="Jenis Nadzir" />
+        <h1 class="text-2xl font-bold mb-4">Jenis Nadzir</h1>
         <div class="flex items-center justify-between mb-4">
-            <TableFilters v-model="search" placeholder="Cari Dokumen...." />
+            <TableFilters
+                v-model="search"
+                placeholder="Cari Jenis Nadzir. . ."
+            />
             <div class="mb-2 flex flex-col sm:flex-row justify-end">
                 <PrimaryButton @click="openModal()">
-                    Tambah Dokumen
+                    Tambah Jenis Nadzir
                 </PrimaryButton>
             </div>
         </div>
         <BaseTable
+            autofocus
             :columns="columns"
             :rows="items.data"
             :filters="filters"
-            route-name="admin.document.index"
+            route-name="admin.jenisNadzir.index"
         >
-            <template #cell-template="{ row }">
-                <div class="flex items-center gap-2">
-                    <FileText class="h-5 w-5 text-slate-500" />
-                    <p
-                        v-if="row.template"
-                        class="text-sm text-slate-700 truncate max-w-[220px]"
-                    >
-                        <a :href="`/storage/${row.template}`">
-                            {{ fileNameFromPath(row.template) }}
-                        </a>
-                    </p>
-                    <p
-                        v-else
-                        class="text-sm text-slate-700 truncate max-w-[220px]"
-                    >
-                        Tidak Ada File Template
-                    </p>
-                </div>
+            <template #cell-is_active="{ row }">
+                <p class="text-sm text-slate-700 truncate max-w-[220px]">
+                    {{ row.is_active === 0 ? "Tidak Aktif" : "Aktif" }}
+                </p>
             </template>
             <template #cell-actions="{ row }">
                 <div class="flex items-center gap-2">
@@ -204,9 +169,30 @@ const removeFile = () => {
                         title="Hapus Data"
                         class="bg-red-500"
                         @click="deleteItem(row)"
+                        v-if="role === 'super-admin'"
                     >
                         <template #icon>
                             <Trash2 class="w-4 h-4 text-white" />
+                        </template>
+                    </ActionButton>
+                    <ActionButton
+                        v-if="row.is_active === 0"
+                        title="Active"
+                        class="bg-green-500"
+                        @click="changeStatus(row, 'Active')"
+                    >
+                        <template #icon>
+                            <CircleCheck class="w-4 h-4 text-white" />
+                        </template>
+                    </ActionButton>
+                    <ActionButton
+                        v-else
+                        title="Non Aktif Data"
+                        class="bg-red-800"
+                        @click="changeStatus(row, 'Non Active')"
+                    >
+                        <template #icon>
+                            <CircleX class="w-4 h-4 text-white" />
                         </template>
                     </ActionButton>
                 </div>
@@ -223,62 +209,26 @@ const removeFile = () => {
         >
             <template #title>
                 <h1 class="text-lg font-semibold">
-                    {{ selectedDocument ? "Edit Dokumen" : "Tambah Dokumen" }}
+                    {{ selectedDocument ? "Edit Data" : "Tambah Data" }}
                 </h1>
             </template>
             <form @submit.prevent="saveData">
                 <div class="px-6 py-2 space-y-5">
-                    <div class="">
-                        <InputLabel
-                            for="jenisNadzir"
-                            value="Untuk Jenis Nadzir"
-                        />
-
-                        <Select
-                            id="jenisNadzir"
-                            v-model="form.jenisNadzir"
-                            :options="optionNadzirs"
-                            placeholder="Pilih Untuk Jenis Nadzir"
-                        />
-
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.jenisNadzir"
-                        />
-                    </div>
                     <div class="mt-2">
-                        <InputLabel for="namaDokumen" value="Nama Dokumen" />
+                        <InputLabel for="nama" value="Jenis Nadzir" />
 
                         <TextInput
-                            id="namaDokumen"
+                            id="nama"
                             type="text"
                             class="w-full block"
-                            v-model="form.namaDokumen"
+                            v-model="form.nama"
                             required
-                            placeholder="Nama Dokumen"
-                            autocomplete="namaDokumen"
+                            autofocus
+                            placeholder="Jenis Nadzir"
+                            autocomplete="nama"
                         />
 
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.namaDokumen"
-                        />
-                    </div>
-                    <div class="mt-2">
-                        <InputLabel
-                            for="template"
-                            value="Template (Jika Ada)"
-                        />
-
-                        <FileUpload
-                            v-model="form.template"
-                            accept=".pdf,.jpg,.jpeg,.png,.doc,.xls,.xlsx"
-                            :maxSize="5"
-                        />
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.template"
-                        />
+                        <InputError class="mt-2" :message="form.errors.nama" />
                     </div>
 
                     <div class="mt-8 py-4 flex items-center justify-end">

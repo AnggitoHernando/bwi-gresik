@@ -6,21 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class TypeDocument extends Model
+class JenisNadzir extends Model
 {
     protected $fillable = [
-        'jenis_nadzir_id',
-        'nama_dokumen',
-        'type_dokumen',
-        'extension',
-        'template',
+        'nama',
+        'is_active',
     ];
+
     public function scopeFilter(Builder $query, Request $request): Builder
     {
         return $query
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
-                    $q->where('nama_dokumen', 'like', "%{$search}%");
+                    $q->where('nama', 'like', "%{$search}%");
                 });
             })
 
@@ -44,8 +42,8 @@ class TypeDocument extends Model
             );
     }
 
-    public function jenisNadzir()
+    public function typeDocument()
     {
-        return $this->belongsTo(JenisNadzir::class, 'jenis_nadzir_id');
+        return $this->hasMany(TypeDocument::class, 'jenis_nadzir_id');
     }
 }

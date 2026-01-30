@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
+
+    public function nadzir()
+    {
+        return $this->hasOne(Nadzir::class, 'user_id');
+    }
 }

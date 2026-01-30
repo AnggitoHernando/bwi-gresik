@@ -17,7 +17,10 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->unique();
-            $table->string('jenis_nadzir', 50);
+            $table->foreignId('jenis_nadzir_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->unique();
             $table->string('nama_nadzir', 150);
             $table->string('nama_lembaga', 150)->nullable();
             $table->foreignId('kecamatan_id')->constrained()->cascadeOnDelete();

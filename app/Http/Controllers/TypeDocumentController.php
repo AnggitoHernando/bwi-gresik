@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JenisNadzir;
 use App\Models\TypeDocument;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class TypeDocumentController extends Controller
 {
@@ -21,6 +23,8 @@ class TypeDocumentController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $listJenisNadzir = JenisNadzir::select('id', 'nama')->where('is_active', 1)->get();
+
         return Inertia::render('Admin/TypeDocument', [
             'items' => $items,
             'filters' => $request->only([
@@ -29,7 +33,8 @@ class TypeDocumentController extends Controller
                 'direction',
                 'from',
                 'to',
-            ])
+            ]),
+            'listJenisNadzir' => $listJenisNadzir
         ]);
     }
 
@@ -50,7 +55,8 @@ class TypeDocumentController extends Controller
             'jenisNadzir' => [
                 'required',
                 'string',
-                'in:Perorangan,Organisasi,Badan Hukum,Semua'
+                Rule::exists('jenis_nadzirs', 'nama')
+                    ->where('is_active', 1),
             ],
 
             'namaDokumen' => [
@@ -92,8 +98,14 @@ class TypeDocumentController extends Controller
             );
         }
 
+        $jenisNadzir = JenisNadzir::where('nama', $request->jenisNadzir)
+            ->where('is_active', 1)
+            ->firstOrFail();
+
+        $jenisNadzirId = $jenisNadzir->id;
+
         TypeDocument::create([
-            'jenis_nadzir' => $validated['jenisNadzir'],
+            'jenis_nadzir_id' => $jenisNadzirId,
             'nama_dokumen' => $validated['namaDokumen'],
             'extension'    => $extension,
             'template'    => $path,
@@ -127,7 +139,8 @@ class TypeDocumentController extends Controller
             'jenisNadzir' => [
                 'required',
                 'string',
-                'in:Perorangan,Organisasi,Badan Hukum,Semua'
+                Rule::exists('jenis_nadzirs', 'nama')
+                    ->where('is_active', 1),
             ],
             'namaDokumen' => ['required', 'string'],
             'template' => [
@@ -138,7 +151,7 @@ class TypeDocumentController extends Controller
             ],
         ]);
 
-        $oldJenis = $typeDocument->jenis_nadzir;
+        $oldJenis = $typeDocument->jenis_nadzir_id;
         $newJenis = $validated['jenisNadzir'];
 
         $typeDocument->jenis_nadzir = $newJenis;

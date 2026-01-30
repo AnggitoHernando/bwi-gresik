@@ -50,7 +50,7 @@ const model = computed({
                 <ListboxOption
                     v-for="item in options"
                     :key="item.id"
-                    :value="item.name"
+                    :value="item.nama"
                     v-slot="{ active, selected }"
                 >
                     <li
@@ -58,10 +58,7 @@ const model = computed({
                         :class="active ? 'bg-slate-100' : ''"
                     >
                         <p class="text-sm font-medium">
-                            {{ item.name }}
-                        </p>
-                        <p class="text-xs text-slate-500">
-                            {{ item.desc }}
+                            {{ item.nama }}
                         </p>
                     </li>
                 </ListboxOption>

@@ -18,6 +18,8 @@ import { Eye, EyeOff } from "lucide-vue-next";
 const showPassword = ref(false);
 const page = usePage();
 import { useSwal } from "@/Composables/useSwal";
+import Select from "@/Components/Select.vue";
+import JenisNadzir from "../Admin/JenisNadzir.vue";
 
 const { success, error } = useSwal();
 const props = defineProps({
@@ -25,17 +27,14 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    listJenisNadzir: {
+        type: Array,
+        default: () => [],
+    },
 });
 
-const optionNadzirs = [
-    { id: 1, name: "Perorangan", desc: "Nadzir perseorangan" },
-    { id: 2, name: "Organisasi", desc: "Nadzir berbentuk organisasi" },
-    { id: 3, name: "Badan Hukum", desc: "Nadzir berbadan hukum" },
-];
-
-const selectedNadzir = ref(optionNadzirs[0]);
 const form = useForm({
-    jenisNadzir: selectedNadzir.value.name,
+    jenisNadzir: "",
     namaNadzir: "",
     namaLembaga: "",
     kecamatan: "",
@@ -47,7 +46,7 @@ const form = useForm({
 const submit = () => {
     form.post(route("pendaftaranNadzir.store"), {
         onFinish: () => {
-            form.reset();
+            // form.reset();
         },
     });
 };
@@ -77,44 +76,17 @@ watch(
                     value="Jenis Nadzir"
                 />
 
-                <Listbox id="jenisNadzir" v-model="selectedNadzir">
-                    <div class="relative">
-                        <ListboxButton
-                            class="p-2 w-full input bg-gray-100 rounded-lg flex items-center justify-between"
-                        >
-                            <span>{{ selectedNadzir.name }}</span>
-                            <ChevronDown class="w-4 h-4 text-slate-500" />
-                        </ListboxButton>
-
-                        <ListboxOptions
-                            class="absolute z-10 mt-2 w-full rounded-xl bg-white border shadow-sm"
-                        >
-                            <ListboxOption
-                                v-for="item in optionNadzirs"
-                                :key="item.id"
-                                :value="item"
-                                v-slot="{ active, selected }"
-                            >
-                                <li
-                                    class="px-4 py-3 cursor-pointer"
-                                    :class="active ? 'bg-slate-100' : ''"
-                                >
-                                    <p class="text-sm font-medium">
-                                        {{ item.name }}
-                                    </p>
-                                    <p class="text-xs text-slate-500">
-                                        {{ item.desc }}
-                                    </p>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </div>
-                </Listbox>
+                <Select
+                    id="jenisNadzir"
+                    v-model="form.jenisNadzir"
+                    :options="listJenisNadzir"
+                    placeholder="Pilih Jenis Nadzir"
+                />
 
                 <InputError class="mt-2" :message="form.errors.jenisNadzir" />
             </div>
 
-            <div v-if="selectedNadzir.name !== 'Perorangan'" class="mt-4">
+            <div v-if="form.jenisNadzir !== 'Perorangan'" class="mt-4">
                 <InputLabel for="namaLembaga" value="Nama Lembaga" />
 
                 <TextInput
@@ -123,12 +95,11 @@ watch(
                     class="mt-1 block w-full"
                     v-model="form.namaLembaga"
                     required
-                    autofocus
                     placeholder="Nama Lembaga"
                     autocomplete="namaLembaga"
                 />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-2" :message="form.errors.namaLembaga" />
             </div>
 
             <div class="mt-4">

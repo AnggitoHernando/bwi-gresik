@@ -1,6 +1,10 @@
 <script setup>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, usePage } from "@inertiajs/vue3";
+import { watch, ref, computed } from "vue";
+const page = usePage();
+const role = page.props.auth.user.role.name;
+console.log(role);
 </script>
 
 <template>

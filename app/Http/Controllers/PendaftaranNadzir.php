@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JenisNadzir;
 use App\Models\Kecamatan;
 use App\Models\Nadzir;
 use App\Models\Role;
@@ -11,26 +12,32 @@ use Inertia\Inertia;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class PendaftaranNadzir extends Controller
 {
     public function index()
     {
         $listKecamatan = Kecamatan::orderBy('nama_kecamatan')->get();
+        $listJenisNadzir = JenisNadzir::select('id', 'nama')->where('is_active', 1)->where('nama', '!=', 'Semua')->get();
         return Inertia::render('Auth/Register', [
-            'listKecamatan' => $listKecamatan
+            'listKecamatan' => $listKecamatan,
+            'listJenisNadzir' => $listJenisNadzir
         ]);
     }
 
     public function store(Request $request)
     {
         // return $request->all();
-        $request->validate(
+        $validated = $request->validate(
             [
                 'jenisNadzir' => [
                     'required',
                     'string',
-                    'in:Perorangan,Organisasi,Badan Hukum'
+                    Rule::exists('jenis_nadzirs', 'nama')
+                        ->where('is_active', 1),
                 ],
                 'namaNadzir' => 'required|string|max:255',
                 'namaLembaga' => [
@@ -69,16 +76,27 @@ class PendaftaranNadzir extends Controller
             ]);
 
             $userId = $user->id;
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            $jenisNadzir = JenisNadzir::where('nama', $request->jenisNadzir)
+                ->where('is_active', 1)
+                ->firstOrFail();
+
+            $jenisNadzirId = $jenisNadzir->id;
 
             Nadzir::create([
                 'user_id' => $userId,
                 'nama_nadzir' => $request->namaNadzir,
-                'jenis_nadzir' => $request->jenisNadzir,
+                'jenis_nadzir_id' => $jenisNadzirId,
                 'nama_lembaga' => $request->namaLembaga,
                 'status' => 'pending',
                 'kecamatan_id' => $request->input('kecamatan.id'),
             ]);
         });
-        return redirect()->back()->with('success', 'Pendaftaran Nadzir Berhasil');
+        return redirect()
+            ->route('login')
+            ->with('success', 'Pendaftaran Nadzir Berhasil');
     }
 }

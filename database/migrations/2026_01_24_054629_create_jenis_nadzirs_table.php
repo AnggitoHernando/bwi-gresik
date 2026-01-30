@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('type_documents', function (Blueprint $table) {
+        Schema::create('jenis_nadzirs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('jenis_nadzir_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->unique();
-            $table->string('nama_dokumen');
-            $table->string('extension');
-            $table->string('template')->nullable();
+            $table->string('nama')->unique();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('type_documents');
+        Schema::dropIfExists('jenis_nadzirs');
     }
 };
