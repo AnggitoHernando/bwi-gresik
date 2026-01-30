@@ -19,6 +19,7 @@ class TypeDocumentController extends Controller
     public function index(Request $request)
     {
         $items = TypeDocument::query()
+            ->with('jenisNadzir:id,nama')
             ->filter($request)
             ->paginate(10)
             ->withQueryString();
@@ -151,10 +152,18 @@ class TypeDocumentController extends Controller
             ],
         ]);
 
-        $oldJenis = $typeDocument->jenis_nadzir_id;
+        $id_old = $typeDocument->jenis_nadzir_id;
+        $jenisNadzir = JenisNadzir::where('id', $id_old)
+            ->where('is_active', 1)
+            ->firstOrFail();
+        $jenisNadzirNew = JenisNadzir::where('nama', $request->jenisNadzir)
+            ->where('is_active', 1)
+            ->firstOrFail();
+        $oldJenis = $jenisNadzir->nama;
         $newJenis = $validated['jenisNadzir'];
+        $newJenisId = $jenisNadzirNew->id;
 
-        $typeDocument->jenis_nadzir = $newJenis;
+        $typeDocument->jenis_nadzir_id = $newJenisId;
         $typeDocument->nama_dokumen = $validated['namaDokumen'];
 
         $basePath = 'template-dokumen/' . Str::slug($newJenis);
@@ -211,5 +220,18 @@ class TypeDocumentController extends Controller
         return redirect()
             ->back()
             ->with('success', 'Dokumen berhasil dihapus');
+    }
+
+    public function destroyTemplate(TypeDocument $typeDocument)
+    {
+        if ($typeDocument->template && Storage::disk('public')->exists($typeDocument->template)) {
+            Storage::disk('public')->delete($typeDocument->template);
+        }
+
+        $typeDocument->update(['template' => '']);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Template berhasil dihapus');
     }
 }

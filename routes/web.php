@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/type-document', [TypeDocumentController::class, 'index'])->name('admin.document.index');
     Route::post('/save-document', [TypeDocumentController::class, 'store'])->name('admin.document.store');
     Route::delete('/delete-dokumen/{typeDocument}', [TypeDocumentController::class, 'destroy'])->name('admin.document.destroy');
+    Route::delete('/delete-dokumen/{typeDocument}/template', [TypeDocumentController::class, 'destroyTemplate'])->name('admin.document.destroyTemplate');
     Route::match(
         ['post', 'patch'],
         '/update-dokumen/{typeDocument}',

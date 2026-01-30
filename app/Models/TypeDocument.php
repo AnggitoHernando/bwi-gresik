@@ -17,10 +17,18 @@ class TypeDocument extends Model
     ];
     public function scopeFilter(Builder $query, Request $request): Builder
     {
+        $sortable = [
+            'nama' => 'type_documents.nama',
+            'created_at' => 'type_documents.created_at',
+            'jenis_nadzir' => 'jenis_nadzirs.nama',
+        ];
         return $query
             ->when($request->search, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
-                    $q->where('nama_dokumen', 'like', "%{$search}%");
+                    $q->where('nama_dokumen', 'like', "%{$search}%")
+                        ->orWhereHas('jenisNadzir', function ($q) use ($search) {
+                            $q->where('nama', 'like', "%{$search}%");
+                        });
                 });
             })
 
@@ -32,16 +40,22 @@ class TypeDocument extends Model
                 $q->whereDate('created_at', '<=', $to);
             })
 
-            ->when(
-                $request->sort,
-                function ($q, $sort) use ($request) {
-                    $direction = $request->get('direction', 'asc');
-                    $q->orderBy($sort, $direction);
-                },
-                function ($q) {
-                    $q->latest();
+            ->when($request->sort, function ($q) use ($request, $sortable) {
+                $sort = $request->sort;
+                $direction = $request->get('direction', 'asc');
+
+                if ($sort === 'jenis_nadzir') {
+                    $q->leftJoin(
+                        'jenis_nadzirs',
+                        'type_documents.jenis_nadzir_id',
+                        '=',
+                        'jenis_nadzirs.id'
+                    );
                 }
-            );
+
+                $q->orderBy($sortable[$sort] ?? 'type_documents.created_at', $direction)
+                    ->select('type_documents.*');
+            });
     }
 
     public function jenisNadzir()

@@ -35,11 +35,6 @@ const selectedDocument = ref(null);
 const showModal = ref(false);
 const page = usePage();
 
-const optionNadzirs = computed(() => [
-    { id: 0, nama: "Semua" },
-    ...props.listJenisNadzir,
-]);
-
 const columns = [
     { label: "Jenis Nadzir", key: "jenis_nadzir", sortable: true },
     { label: "Nama Dokumen", key: "nama_dokumen", sortable: true },
@@ -111,6 +106,9 @@ watch(search, (value) => {
 
 const saveData = () => {
     if (form.id) {
+        if (form.jenisNadzir && typeof form.jenisNadzir === "object") {
+            form.jenisNadzir = form.jenisNadzir.nama;
+        }
         const hasNewFile = form.template instanceof File;
         if (!hasNewFile) {
             form.template = null;
@@ -147,6 +145,16 @@ function deleteItem(row) {
     });
 }
 
+function deleteTemplate(row) {
+    confirm("Template akan dihapus permanen!").then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route("admin.document.destroyTemplate", row), {
+                onSuccess: () => {},
+            });
+        }
+    });
+}
+
 const removeFile = () => {
     form.template = null;
 };
@@ -170,17 +178,28 @@ const removeFile = () => {
             :filters="filters"
             route-name="admin.document.index"
         >
+            <template #cell-jenis_nadzir="{ row }">
+                <p class="text-sm text-slate-700 truncate max-w-[220px]">
+                    {{ row.jenis_nadzir.nama }}
+                </p>
+            </template>
             <template #cell-template="{ row }">
                 <div class="flex items-center gap-2">
                     <FileText class="h-5 w-5 text-slate-500" />
-                    <p
+                    <span
                         v-if="row.template"
                         class="text-sm text-slate-700 truncate max-w-[220px]"
                     >
                         <a :href="`/storage/${row.template}`">
                             {{ fileNameFromPath(row.template) }}
                         </a>
-                    </p>
+                        <p
+                            class="text-xs text-red-600 cursor-pointer hover:underline"
+                            @click="deleteTemplate(row)"
+                        >
+                            Hapus template
+                        </p>
+                    </span>
                     <p
                         v-else
                         class="text-sm text-slate-700 truncate max-w-[220px]"
@@ -237,7 +256,7 @@ const removeFile = () => {
                         <Select
                             id="jenisNadzir"
                             v-model="form.jenisNadzir"
-                            :options="optionNadzirs"
+                            :options="listJenisNadzir"
                             placeholder="Pilih Untuk Jenis Nadzir"
                         />
 

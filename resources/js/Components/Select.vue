@@ -10,7 +10,7 @@ import { ChevronDown } from "lucide-vue-next";
 
 const props = defineProps({
     modelValue: {
-        type: [String, null],
+        type: [Object, String, null],
         default: null,
     },
     options: {
@@ -33,6 +33,14 @@ const model = computed({
     get: () => props.modelValue,
     set: (val) => emit("update:modelValue", val),
 });
+
+const displayValue = computed(() => {
+    if (props.modelValue && typeof props.modelValue === "object") {
+        return props.modelValue.nama ?? props.placeholder;
+    }
+
+    return props.modelValue || props.placeholder;
+});
 </script>
 <template>
     <Listbox :id="props.id" v-model="model">
@@ -40,7 +48,7 @@ const model = computed({
             <ListboxButton
                 class="p-2 w-full input bg-gray-100 rounded-lg flex items-center justify-between"
             >
-                <span>{{ model || placeholder }}</span>
+                <span>{{ displayValue }}</span>
                 <ChevronDown class="w-4 h-4 text-slate-500" />
             </ListboxButton>
 
