@@ -5,6 +5,8 @@ import { watch, ref, computed } from "vue";
 import VerificationPanel from "@/Components/VerificationPanel.vue";
 const page = usePage();
 const role = page.props.auth.user.role.name;
+const user = page.props.items;
+console.log(user);
 
 const documents = ref([
     {

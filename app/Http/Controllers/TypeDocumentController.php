@@ -59,6 +59,7 @@ class TypeDocumentController extends Controller
                 Rule::exists('jenis_nadzirs', 'nama')
                     ->where('is_active', 1),
             ],
+            'allowedTypes' => ['required', 'array'],
 
             'namaDokumen' => [
                 'required',
@@ -108,7 +109,7 @@ class TypeDocumentController extends Controller
         TypeDocument::create([
             'jenis_nadzir_id' => $jenisNadzirId,
             'nama_dokumen' => $validated['namaDokumen'],
-            'extension'    => $extension,
+            'allowed_types' => $validated['allowedTypes'],
             'template'    => $path,
         ]);
 
@@ -143,6 +144,7 @@ class TypeDocumentController extends Controller
                 Rule::exists('jenis_nadzirs', 'nama')
                     ->where('is_active', 1),
             ],
+            'allowedTypes' => ['required', 'array'],
             'namaDokumen' => ['required', 'string'],
             'template' => [
                 'nullable',
@@ -165,6 +167,7 @@ class TypeDocumentController extends Controller
 
         $typeDocument->jenis_nadzir_id = $newJenisId;
         $typeDocument->nama_dokumen = $validated['namaDokumen'];
+        $typeDocument->allowed_types = $validated['allowedTypes'];
 
         $basePath = 'template-dokumen/' . Str::slug($newJenis);
 

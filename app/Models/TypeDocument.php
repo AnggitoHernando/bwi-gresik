@@ -14,7 +14,12 @@ class TypeDocument extends Model
         'type_dokumen',
         'extension',
         'template',
+        'allowed_types'
     ];
+    protected $casts = [
+        'allowed_types' => 'array',
+    ];
+
     public function scopeFilter(Builder $query, Request $request): Builder
     {
         $sortable = [

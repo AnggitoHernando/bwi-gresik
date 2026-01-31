@@ -39,6 +39,7 @@ const page = usePage();
 const columns = [
     { label: "Jenis Nadzir", key: "jenis_nadzir", sortable: true },
     { label: "Nama Dokumen", key: "nama_dokumen", sortable: true },
+    { label: "Tipe Dokumen", key: "allowed_types", sortable: false },
     { label: "Template", key: "template", sortable: false },
     { label: "Aksi", key: "actions" },
 ];
@@ -195,6 +196,17 @@ const removeFile = () => {
                 <p class="text-sm text-slate-700 truncate max-w-[220px]">
                     {{ row.jenis_nadzir.nama }}
                 </p>
+            </template>
+            <template #cell-allowed_types="{ row }">
+                <div class="flex flex-wrap gap-2">
+                    <span
+                        v-for="type in row.allowed_types"
+                        :key="type"
+                        class="px-2 py-0.5 text-xs rounded bg-secondary"
+                    >
+                        {{ type.toUpperCase() }}
+                    </span>
+                </div>
             </template>
             <template #cell-template="{ row }">
                 <div class="flex items-center gap-2">

@@ -46,32 +46,28 @@ const toggle = () => {
 
 <template>
     <label
-        @click.prevent="toggle"
-        class="flex items-center gap-3 cursor-pointer select-none"
-        :class="disabled && 'opacity-50 cursor-not-allowed'"
+        class="flex items-center gap-3 select-none"
+        :class="[disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer']"
+        @click="!disabled && toggle()"
     >
         <span
-            @click.prevent="toggle"
             class="relative flex h-5 w-5 items-center justify-center rounded-md border transition-all"
-            :class="[
+            :class="
                 isChecked
                     ? 'bg-primary border-primary text-white'
-                    : 'bg-white border-gray-300',
-                !disabled &&
-                    'hover:border-primary focus-visible:ring-2 focus-visible:ring-primary',
-            ]"
+                    : 'bg-white border-gray-300'
+            "
         >
             <Check v-if="isChecked" class="h-4 w-4" />
         </span>
 
-        <span v-if="label" class="text-sm text-gray-700">
+        <span class="text-sm text-gray-700">
             {{ label }}
         </span>
     </label>
 </template>
 
 <style scoped>
-/* optional micro-interaction */
 span {
     transition:
         background-color 0.15s ease,
