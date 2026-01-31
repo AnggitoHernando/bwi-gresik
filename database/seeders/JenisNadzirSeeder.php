@@ -14,7 +14,18 @@ class JenisNadzirSeeder extends Seeder
     public function run(): void
     {
         DB::table('jenis_nadzirs')->insert([
-            'nama' => 'Semua',
+            [
+                'nama' => 'Semua',
+            ],
+            [
+                'nama' => 'Perorangan',
+            ],
+            [
+                'nama' => 'Lembaga',
+            ],
+            [
+                'nama' => 'Badan',
+            ],
         ]);
     }
 }

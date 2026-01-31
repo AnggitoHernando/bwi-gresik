@@ -15,6 +15,7 @@ class JenisNadzirController extends Controller
     public function index(Request $request)
     {
         $items = JenisNadzir::query()
+            ->where('nama', '!=', 'Semua')
             ->filter($request)
             ->paginate(10)
             ->withQueryString();

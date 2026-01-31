@@ -18,7 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->unique();
             $table->string('nama_dokumen');
-            $table->string('extension');
+            $table->json('allowed_types')->nullable();
             $table->string('template')->nullable();
             $table->timestamps();
         });

@@ -15,6 +15,7 @@ import TextInput from "@/Components/TextInput.vue";
 import Modal from "@/Components/ModalBaru.vue";
 import Select from "@/Components/Select.vue";
 import FileUpload from "@/Components/FileUpload.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 
 const { confirm, success } = useSwal();
 const props = defineProps({
@@ -49,6 +50,7 @@ const form = useForm({
     jenisNadzir: "",
     namaDokumen: "",
     template: null,
+    allowedTypes: [],
 });
 
 const fieldMap = {
@@ -56,7 +58,18 @@ const fieldMap = {
     jenisNadzir: "jenis_nadzir",
     namaDokumen: "nama_dokumen",
     template: "template",
+    allowedTypes: "allowed_types",
 };
+
+const typeAlloweds = [
+    { value: "pdf", label: "PDF" },
+    { value: "doc", label: "DOC" },
+    { value: "png", label: "PNG" },
+    { value: "jpg", label: "JPG" },
+    { value: "jpeg", label: "JPEG" },
+    { value: "xls", label: "XLS" },
+    { value: "xlsx", label: "XLSX" },
+];
 
 const assignForm = (row) => {
     Object.keys(fieldMap).forEach((key) => {
@@ -281,6 +294,22 @@ const removeFile = () => {
                         <InputError
                             class="mt-2"
                             :message="form.errors.namaDokumen"
+                        />
+                    </div>
+                    <div class="mt-2">
+                        <InputLabel for="allowedTypes" value="Jenis Dokumen" />
+                        <div class="mt-2 grid grid-cols-3 gap-4">
+                            <Checkbox
+                                v-model="form.allowedTypes"
+                                v-for="type in typeAlloweds"
+                                :value="type.value"
+                                :label="type.label"
+                            />
+                        </div>
+
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.allowedTypes"
                         />
                     </div>
                     <div class="mt-2">

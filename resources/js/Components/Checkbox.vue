@@ -1,34 +1,80 @@
 <script setup>
-import { computed } from 'vue';
-
-const emit = defineEmits(['update:checked']);
+import { Check } from "lucide-vue-next";
+import { computed } from "vue";
 
 const props = defineProps({
-    checked: {
-        type: [Array, Boolean],
-        required: true,
+    modelValue: {
+        type: [Boolean, Array],
+        default: false,
     },
     value: {
-        default: null,
+        type: [String, Number, Boolean],
+        default: true,
+    },
+    label: {
+        type: String,
+        default: "",
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
     },
 });
 
-const proxyChecked = computed({
-    get() {
-        return props.checked;
-    },
+const emit = defineEmits(["update:modelValue"]);
 
-    set(val) {
-        emit('update:checked', val);
-    },
+const isChecked = computed(() => {
+    if (Array.isArray(props.modelValue)) {
+        return props.modelValue.includes(props.value);
+    }
+    return props.modelValue;
 });
+
+const toggle = () => {
+    if (props.disabled) return;
+
+    if (Array.isArray(props.modelValue)) {
+        const newValue = isChecked.value
+            ? props.modelValue.filter((v) => v !== props.value)
+            : [...props.modelValue, props.value];
+        emit("update:modelValue", newValue);
+    } else {
+        emit("update:modelValue", !props.modelValue);
+    }
+};
 </script>
 
 <template>
-    <input
-        type="checkbox"
-        :value="value"
-        v-model="proxyChecked"
-        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-    />
+    <label
+        @click.prevent="toggle"
+        class="flex items-center gap-3 cursor-pointer select-none"
+        :class="disabled && 'opacity-50 cursor-not-allowed'"
+    >
+        <span
+            @click.prevent="toggle"
+            class="relative flex h-5 w-5 items-center justify-center rounded-md border transition-all"
+            :class="[
+                isChecked
+                    ? 'bg-primary border-primary text-white'
+                    : 'bg-white border-gray-300',
+                !disabled &&
+                    'hover:border-primary focus-visible:ring-2 focus-visible:ring-primary',
+            ]"
+        >
+            <Check v-if="isChecked" class="h-4 w-4" />
+        </span>
+
+        <span v-if="label" class="text-sm text-gray-700">
+            {{ label }}
+        </span>
+    </label>
 </template>
+
+<style scoped>
+/* optional micro-interaction */
+span {
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+}
+</style>
