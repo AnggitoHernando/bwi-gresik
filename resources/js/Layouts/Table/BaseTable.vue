@@ -47,7 +47,7 @@ const toggleSort = (column) => {
         {
             preserveState: true,
             replace: true,
-        }
+        },
     );
 };
 </script>
@@ -55,12 +55,12 @@ const toggleSort = (column) => {
 <template>
     <div class="overflow-x-auto rounded border">
         <table class="min-w-full text-sm">
-            <thead class="bg-gray-100">
+            <thead class="">
                 <tr>
                     <th
                         v-for="col in columns"
                         :key="col.key"
-                        class="px-4 py-3 text-left font-semibold"
+                        class="px-4 py-3 text-center font-semibold"
                     >
                         <div
                             v-if="col.sortable"

@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
         '/update-dokumen/{typeDocument}',
         [TypeDocumentController::class, 'update']
     )->name('admin.document.update');
+
+    Route::post('/upload-dokumen-pendaftaran', [DashboardController::class, 'store'])->name('admin.dashboard.store');
 });
 
 require __DIR__ . '/auth.php';

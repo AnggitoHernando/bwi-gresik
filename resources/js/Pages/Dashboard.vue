@@ -4,53 +4,62 @@ import { Head, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed } from "vue";
 import VerificationPanel from "@/Components/VerificationPanel.vue";
 const page = usePage();
-const role = page.props.auth.user.role.name;
-const user = page.props.items;
-console.log(user);
+const { confirm, success } = useSwal();
+import { useSwal } from "@/Composables/useSwal";
+const isVerified = computed(
+    () =>
+        page.props.auth.user.role.name !== "nadzir" ||
+        page.props.auth.user.nadzir?.status === "approved",
+);
 
-const documents = ref([
-    {
-        id: 1,
-        name: "KTP Nadzir",
-        note: "Scan KTP seluruh pengurus nadzir (PDF)",
-        status: "pending",
-        statusLabel: "Belum Upload",
+const props = defineProps({
+    listDokumen: {
+        type: Object,
+        default: () => ({}),
     },
-    {
-        id: 2,
-        name: "Surat Pengangkatan Nadzir",
-        note: "Dari KUA/BWI (PDF)",
-        status: "uploaded",
-        statusLabel: "Menunggu Verifikasi",
+    totalDokumen: {
+        type: Number,
+        default: 0,
     },
-    {
-        id: 3,
-        name: "SK Organisasi",
-        note: "Jika nadzir berbentuk lembaga",
-        status: "approved",
-        statusLabel: "Disetujui",
+    approved: {
+        type: Number,
+        default: 0,
     },
-    {
-        id: 4,
-        name: "NPWP",
-        note: "Opsional",
-        status: "rejected",
-        statusLabel: "Ditolak",
+    percent: {
+        type: Number,
+        default: 0,
     },
-]);
+});
+
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash?.success) success(flash.success);
+        if (flash?.error) error(flash.error);
+    },
+    { deep: true },
+);
 </script>
 
 <template>
     <AdminLayout>
         <Head title="Dashboard" />
         <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
-        <div>
-            <VerificationPanel :documents="documents" />
+        <div v-if="!isVerified">
+            <VerificationPanel
+                :totalDokumen="totalDokumen"
+                :approved="approved"
+                :percent="percent"
+                :statusVerified="isVerified"
+                :documents="listDokumen"
+            />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white p-4 rounded shadow">Card 1</div>
-            <div class="bg-white p-4 rounded shadow">Card 2</div>
-            <div class="bg-white p-4 rounded shadow">Card 3</div>
+        <div v-else>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded shadow">Card 1</div>
+                <div class="bg-white p-4 rounded shadow">Card 2</div>
+                <div class="bg-white p-4 rounded shadow">Card 3</div>
+            </div>
         </div>
     </AdminLayout>
 </template>

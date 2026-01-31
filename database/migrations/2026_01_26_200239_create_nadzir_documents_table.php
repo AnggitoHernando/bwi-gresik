@@ -19,6 +19,7 @@ return new class extends Migration
             $table->tinyInteger('is_verified')
                 ->default(0)
                 ->comment('0 = belum verified, 1 = sudah verified');
+            $table->string('keterangan_penolakan')->nullable();
             $table->timestamps();
 
             $table->unique(['nadzir_id', 'type_document_id']);
