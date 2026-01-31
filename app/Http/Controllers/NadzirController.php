@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nadzir;
-use App\Models\KritikSaran;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,7 +13,9 @@ class NadzirController extends Controller
      */
     public function index(Request $request)
     {
-        $items = KritikSaran::query()
+        $items = Nadzir::query()
+            ->with('kecamatan:id,nama_kecamatan')
+            ->with('jenisNadzir:id,nama')
             ->filter($request)
             ->paginate(10)
             ->withQueryString();

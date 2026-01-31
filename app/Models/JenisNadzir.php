@@ -46,4 +46,9 @@ class JenisNadzir extends Model
     {
         return $this->hasMany(TypeDocument::class, 'jenis_nadzir_id');
     }
+
+    public function nadzir()
+    {
+        return $this->hasMany(Nadzir::class, 'jenis_nadzir_id');
+    }
 }
